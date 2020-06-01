@@ -55,14 +55,14 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     //ジャンプ処理
     if (this.jumping) {
       this.jumping = false;
-      if (this.jumpTime < 0.3f) {
-        this.jumpTime = 0.3f;
-      }
-      else if (this.jumpTime > 1.0f) {
+      if (this.jumpTime > 1.0f) {
         this.jumpTime = 1.0f;
       }
+
+      float jumpPower = 0.3f + JumpHeightCalculation(0.3f, 1.0f);
+
       this.rigid2d.velocity = new Vector2(this.jumpForceX * transform.localScale.x,
-                                                           this.jumpForceY * this.jumpTime);
+                                                           this.jumpForceY * jumpPower);
       this.jumpTime = 0;
       this.jumpDelayCount = 0;
     }
@@ -142,7 +142,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     }
     if (Input.GetKeyUp(KeyCode.Space)) {
       this.jumpTap = false;
-        this.animator.SetBool("JumpTame", false);
+      this.animator.SetBool("JumpTame", false);
     }
     //--------------キー入力ここまで--------------
 
@@ -171,5 +171,13 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     //フレームの最後の処理
     this.oldJumpTap = this.jumpTap;
     this.hpBarImage.fillAmount = this.jumpTime / 1.0f; //貯めをゲージに反映
+  }
+
+  //ジャンプの高さを計算する関数
+  private float JumpHeightCalculation(float minPower, float maxPower) {
+    float nowTime = this.jumpTime / 1.0f;
+    float powerWidth = maxPower - minPower;
+    float powerResult = powerWidth * nowTime;
+    return powerResult;
   }
 }
