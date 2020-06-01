@@ -14,7 +14,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   bool jumpTap = false;
   bool oldJumpTap = false;
   bool jumping = false;
-  public bool grounded_result = false;
+  bool grounded_result = false;
   bool[] grounded = new bool[3] { false, false, false };
   public LayerMask groundLayer;
   public float jumpForceX = 5f;
@@ -58,7 +58,11 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       if (this.jumpTime < 0.3f) {
         this.jumpTime = 0.3f;
       }
-      this.rigid2d.velocity = new Vector2(this.jumpForceX * transform.localScale.x, this.jumpForceY * this.jumpTime);
+      else if (this.jumpTime > 1.0f) {
+        this.jumpTime = 1.0f;
+      }
+      this.rigid2d.velocity = new Vector2(this.jumpForceX * transform.localScale.x,
+                                                           this.jumpForceY * this.jumpTime);
       this.jumpTime = 0;
       this.jumpDelayCount = 0;
     }
