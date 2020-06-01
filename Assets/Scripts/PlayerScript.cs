@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript>
-{
-  //[System.NonSerialized]
+public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   Rigidbody2D rigid2d;
   Animator animator;
+  public Vector2 velocityMin = new Vector2(-15.0f, -15.0f);
+  public Vector2 velocityMax = new Vector2(+15.0f, +15.0f);
   public float walkSpeed = 3.0f;
   bool leftTap = false;
   bool rightTap = false;
@@ -17,8 +17,8 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript>
   public bool grounded_result = false;
   bool[] grounded = new bool[3] { false, false, false };
   public LayerMask groundLayer;
-  float jumpForceX = 5f;
-  float jumpForceY = 20.0f;
+  public float jumpForceX = 5f;
+  public float jumpForceY = 20.0f;
   float jumpTime = 0; //ジャンプ貯め時間を保存する変数
   float jumpDelay = 0.4f;
   float jumpDelayCount = 3.0f;
@@ -68,8 +68,11 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript>
     if ((this.grounded_result) && (this.jumpDelay < this.jumpDelayCount) && (key != 0)) {
       speed = this.walkSpeed * key;
     }
-
-    this.rigid2d.velocity = new Vector2(speed, this.rigid2d.velocity.y);
+    //スピード制限
+    float vx = Mathf.Clamp(speed, this.velocityMin.x, this.velocityMax.x);
+    float vy = Mathf.Clamp(this.rigid2d.velocity.y, this.velocityMin.y, this.velocityMax.y);
+    //速度反映
+    this.rigid2d.velocity = new Vector2(vx, vy);
   }
 
   void Update() {
@@ -130,10 +133,12 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript>
     if (!this.jumping && this.grounded_result) {
       if (Input.GetKeyDown(KeyCode.Space)) {
         this.jumpTap = true;
+        this.animator.SetBool("JumpTame", true);
       }
     }
     if (Input.GetKeyUp(KeyCode.Space)) {
       this.jumpTap = false;
+        this.animator.SetBool("JumpTame", false);
     }
     //--------------キー入力ここまで--------------
 
@@ -146,6 +151,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript>
     if (((!this.jumpTap && this.oldJumpTap) || (this.jumpTime > 1.0f)) && this.grounded_result) {
       this.jumping = true;
       this.jumpTap = false;
+      this.animator.SetBool("JumpTame", false);
       this.jumpDelayCount = 0;
     }
     //ジャンプを連続できないようにするディレイタイムを加算する
@@ -156,9 +162,10 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript>
     if (!this.grounded_result) {
       this.jumpDelayCount = 2.0f;
     }
+    //Y速度をanimationのSpeedYに代入
+    this.animator.SetFloat("SpeedY", this.rigid2d.velocity.y);
     //フレームの最後の処理
     this.oldJumpTap = this.jumpTap;
     this.hpBarImage.fillAmount = this.jumpTime / 1.0f; //貯めをゲージに反映
-    Debug.Log(this.grounded_result);
   }
 }
