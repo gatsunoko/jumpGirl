@@ -8,6 +8,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   Animator animator;
   public GameObject groundedCollider;
   public GameObject jumpCollider;
+  //public GameObject boundAfterCollider;
   public float walkSpeedMax = 2.0f;
   public Vector2 velocityMin = new Vector2(-15.0f, -15.0f);
   public Vector2 velocityMax = new Vector2(+15.0f, +15.0f);
