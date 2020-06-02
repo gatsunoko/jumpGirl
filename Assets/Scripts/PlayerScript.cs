@@ -23,6 +23,8 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   float jumpDelay = 0.4f;
   float jumpDelayCount = 3.0f;
   Image hpBarImage;
+  public LayerMask slopeLayer;
+  bool staySlope = false;
 
   void Start() {
     this.rigid2d = GetComponent<Rigidbody2D>();
@@ -91,6 +93,9 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     Debug.DrawLine(centerPosition, linePos, Color.red);
     linePos.x -= 0.1f * myLocalScaleX;
     grounded[1] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
+    Vector2 slopeLine = new Vector2(centerPosition.x, centerPosition.y - 0.13f);              //坂道に接しているかもついでに判定
+    this.staySlope = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer);//坂道に接しているかもついでに判定
+    Debug.DrawLine(centerPosition, slopeLine, Color.blue);
     Debug.DrawLine(centerPosition, linePos, Color.red);
     linePos.x += 0.25f * myLocalScaleX;
     grounded[2] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
@@ -103,6 +108,13 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     else {
       grounded_result = false;
       this.jumpTime = 0;
+    }
+
+    if (this.staySlope) {
+      this.animator.SetBool("Slope", true);
+    }
+    else {
+      this.animator.SetBool("Slope", false);
     }
 
     if (grounded_result) {

@@ -377,6 +377,9 @@ MonoBehaviour:
     m_Bits: 256
   jumpForceX: 4
   jumpForceY: 13
+  slopeLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!61 &258592096
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -565,7 +568,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 258592094}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -179.55762, y: -114.22, z: 0}
+  m_LocalPosition: {x: -178.5, y: -114.88, z: 0}
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_Children:
   - {fileID: 1895199931}
@@ -1578,7 +1581,7 @@ GameObject:
   - component: {fileID: 1420667246}
   - component: {fileID: 1420667248}
   - component: {fileID: 1420667247}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: whiteBox (4)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1592,13 +1595,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1420667245}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -174.4, y: -116.67, z: 8.53125}
-  m_LocalScale: {x: 3.537106, y: 0.49945, z: 1}
+  m_LocalRotation: {x: 0, y: 0, z: -0.38268343, w: 0.92387956}
+  m_LocalPosition: {x: -177.12, y: -120.21, z: 8.53125}
+  m_LocalScale: {x: 6, y: 0.49945, z: 1}
   m_Children: []
   m_Father: {fileID: 104768149}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -45}
 --- !u!61 &1420667247
 BoxCollider2D:
   m_ObjectHideFlags: 0
