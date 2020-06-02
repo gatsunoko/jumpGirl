@@ -8,6 +8,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   Animator animator;
   public GameObject groundedCollider;
   public GameObject jumpCollider;
+  public float walkSpeedMax = 2.0f;
   public Vector2 velocityMin = new Vector2(-15.0f, -15.0f);
   public Vector2 velocityMax = new Vector2(+15.0f, +15.0f);
   public float walkSpeed = 3.0f;
@@ -55,6 +56,13 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     else {
       this.animator.SetBool("walk", false);
     }
+    //地面に接地していたら歩行処理
+    if ((this.grounded_result) && (this.jumpDelay < this.jumpDelayCount) && (key != 0)) {
+      //歩行maxスピード以下なら速度を足
+      if (Mathf.Abs(this.rigid2d.velocity.x) < this.walkSpeedMax) {
+        this.rigid2d.AddForce(new Vector2(this.walkSpeed * key, 0));
+      }
+    }
 
     //ジャンプ処理
     if (this.jumping) {
@@ -63,7 +71,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
         this.jumpTime = 1.0f;
       }
 
-      float jumpPower = 0.3f + JumpHeightCalculation(0.3f, 1.0f);
+      float jumpPower = 0.2f + JumpHeightCalculation(0.2f, 1.0f);
 
       this.rigid2d.velocity = new Vector2(this.jumpForceX * transform.localScale.x,
                                                            this.jumpForceY * jumpPower);
@@ -71,13 +79,8 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.jumpDelayCount = 0;
     }
 
-    //地面に接地していたら歩行処理
-    float speed = this.rigid2d.velocity.x;
-    if ((this.grounded_result) && (this.jumpDelay < this.jumpDelayCount) && (key != 0)) {
-      speed = this.walkSpeed * key;
-    }
     //スピード制限
-    float vx = Mathf.Clamp(speed, this.velocityMin.x, this.velocityMax.x);
+    float vx = Mathf.Clamp(this.rigid2d.velocity.x, this.velocityMin.x, this.velocityMax.x);
     float vy = Mathf.Clamp(this.rigid2d.velocity.y, this.velocityMin.y, this.velocityMax.y);
     //速度反映
     this.rigid2d.velocity = new Vector2(vx, vy);
@@ -89,20 +92,16 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     Vector2 linePos = transform.position;
     float myLocalScaleX = transform.localScale.x;
     centerPosition = new Vector2(transform.position.x + 0.0967f * myLocalScaleX, transform.position.y + 0.1938f);
-    //linePos.y += 0.118f;
-    //linePos.x += 0.1f * myLocalScaleX;
-    linePos = new Vector2(centerPosition.x + 0.1f, centerPosition.y - 0.1f);
+    linePos = new Vector2(centerPosition.x + 0.09f * myLocalScaleX, centerPosition.y - 0.1f);
     grounded[0] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
     Debug.DrawLine(centerPosition, linePos, Color.red);
-    //linePos.x -= 0.1f * myLocalScaleX;
     linePos = new Vector2(centerPosition.x, centerPosition.y - 0.1f);
     grounded[1] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
     Vector2 slopeLine = new Vector2(centerPosition.x, centerPosition.y - 0.13f);//坂道に接しているかもついでに判定
     this.staySlope = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer); //坂道に接しているかもついでに判定
     Debug.DrawLine(centerPosition, slopeLine, Color.blue);
     Debug.DrawLine(centerPosition, linePos, Color.red);
-    //linePos.x += 0.25f * myLocalScaleX;
-    linePos = new Vector2(centerPosition.x - 0.12f, centerPosition.y - 0.12f);
+    linePos = new Vector2(centerPosition.x - 0.12f * myLocalScaleX, centerPosition.y - 0.12f);
     grounded[2] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
     Debug.DrawLine(centerPosition, linePos, Color.red);
 
