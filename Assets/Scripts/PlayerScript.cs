@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   Rigidbody2D rigid2d;
   Animator animator;
+  public GameObject groundedCollider;
+  public GameObject jumpCollider;
   public Vector2 velocityMin = new Vector2(-15.0f, -15.0f);
   public Vector2 velocityMax = new Vector2(+15.0f, +15.0f);
   public float walkSpeed = 3.0f;
@@ -87,17 +89,20 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     Vector2 linePos = transform.position;
     float myLocalScaleX = transform.localScale.x;
     centerPosition = new Vector2(transform.position.x + 0.0967f * myLocalScaleX, transform.position.y + 0.1938f);
-    linePos.y += 0.118f;
-    linePos.x += 0.1f * myLocalScaleX;
+    //linePos.y += 0.118f;
+    //linePos.x += 0.1f * myLocalScaleX;
+    linePos = new Vector2(centerPosition.x + 0.1f, centerPosition.y - 0.1f);
     grounded[0] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
     Debug.DrawLine(centerPosition, linePos, Color.red);
-    linePos.x -= 0.1f * myLocalScaleX;
+    //linePos.x -= 0.1f * myLocalScaleX;
+    linePos = new Vector2(centerPosition.x, centerPosition.y - 0.1f);
     grounded[1] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
-    Vector2 slopeLine = new Vector2(centerPosition.x, centerPosition.y - 0.13f);              //坂道に接しているかもついでに判定
-    this.staySlope = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer);//坂道に接しているかもついでに判定
+    Vector2 slopeLine = new Vector2(centerPosition.x, centerPosition.y - 0.13f);//坂道に接しているかもついでに判定
+    this.staySlope = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer); //坂道に接しているかもついでに判定
     Debug.DrawLine(centerPosition, slopeLine, Color.blue);
     Debug.DrawLine(centerPosition, linePos, Color.red);
-    linePos.x += 0.25f * myLocalScaleX;
+    //linePos.x += 0.25f * myLocalScaleX;
+    linePos = new Vector2(centerPosition.x - 0.12f, centerPosition.y - 0.12f);
     grounded[2] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
     Debug.DrawLine(centerPosition, linePos, Color.red);
 
@@ -118,9 +123,13 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     }
 
     if (grounded_result) {
+      this.groundedCollider.SetActive(true);
+      this.jumpCollider.SetActive(false);
       this.animator.SetBool("Grounded", true);
     }
     else {
+      this.groundedCollider.SetActive(false);
+      this.jumpCollider.SetActive(true);
       this.animator.SetBool("Grounded", false);
     }
 
