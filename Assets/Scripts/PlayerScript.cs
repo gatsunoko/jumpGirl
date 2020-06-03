@@ -201,4 +201,20 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     float powerResult = powerWidth * nowTime;
     return powerResult;
   }
+
+  private void OnCollisionEnter2D(Collision2D col) {
+    //動く床に乗った時動く要素を親オブジェクトにする
+    if (col.gameObject.tag == "MoveFloor" || col.gameObject.name == "MoveFloor") {
+      transform.SetParent(col.transform);
+    }
+  }
+
+  private void OnTriggerExit2D(Collider2D col) {
+    //動く床から離れたら床との親子関係を解消する
+    if (col.gameObject.tag == "MoveFloor" || col.gameObject.name == "MoveFloor") {
+      transform.SetParent(null);
+      //親オブジェクトが回転していた場合自分の角度も狂っているので、０にする
+      transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+  }
 }
