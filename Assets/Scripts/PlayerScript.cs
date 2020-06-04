@@ -126,6 +126,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.groundedCollider.SetActive(true);
       this.jumpCollider.SetActive(false);
       this.animator.SetBool("Grounded", true);
+      this.animator.SetBool("Slope", false);
     }
     else {
       this.groundedCollider.SetActive(false);
