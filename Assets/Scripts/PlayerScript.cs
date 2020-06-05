@@ -29,12 +29,16 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   Image hpBarImage;
   public LayerMask slopeLayer;
   bool staySlope = false;
+  AudioSource jump_sound;
 
   void Start() {
     this.rigid2d = GetComponent<Rigidbody2D>();
     this.animator = GetComponent<Animator>();
     GameObject hpBar = GameObject.Find("HPBar");
     this.hpBarImage = hpBar.GetComponent<Image>();
+    //AudioSourceコンポーネントを取得し、変数に格納
+    AudioSource[] audioSources = GetComponents<AudioSource>();
+    this.jump_sound = audioSources[0];
   }
 
   private void FixedUpdate() {
@@ -179,6 +183,9 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.jumpTap = false;
       this.animator.SetBool("JumpTame", false);
       this.jumpDelayCount = 0;
+      this.jump_sound.PlayOneShot(this.jump_sound.clip); //効果音を鳴らす
+      PlayerPrefs.SetFloat("ResbornX", transform.position.x);
+      PlayerPrefs.SetFloat("ResbornY", transform.position.y);
     }
     //ジャンプを連続できないようにするディレイタイムを加算する
     if (this.jumpDelayCount < 2.0f) {
