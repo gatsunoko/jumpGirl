@@ -8,6 +8,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   Animator animator;
   public GameObject groundedCollider;
   public GameObject jumpCollider;
+  public GameObject slopeCollider;
   //public GameObject boundAfterCollider;
   public float walkSpeedMax = 2.0f;
   public Vector2 velocityMin = new Vector2(-15.0f, -15.0f);
@@ -129,6 +130,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     if (grounded_result) {
       this.groundedCollider.SetActive(true);
       this.jumpCollider.SetActive(false);
+      this.slopeCollider.SetActive(false);
       this.animator.SetBool("Grounded", true);
       this.animator.SetBool("Slope", false);
     }
@@ -136,6 +138,11 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.groundedCollider.SetActive(false);
       this.jumpCollider.SetActive(true);
       this.animator.SetBool("Grounded", false);
+      this.slopeCollider.SetActive(false);
+      if (this.staySlope) {
+        this.jumpCollider.SetActive(false);
+        this.slopeCollider.SetActive(true);
+      }
     }
 
     //--------------キー入力--------------
