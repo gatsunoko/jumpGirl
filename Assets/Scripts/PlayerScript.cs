@@ -29,7 +29,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   float jumpDelayCount = 3.0f;
   Image hpBarImage;
   public LayerMask slopeLayer;
-  bool staySlope = false;
+  bool[] staySlope = new bool[3] { false, false, false };
   AudioSource jump_sound;
 
   void Start() {
@@ -100,15 +100,21 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     centerPosition = new Vector2(transform.position.x + 0.0967f * myLocalScaleX, transform.position.y + 0.1938f);
     linePos = new Vector2(centerPosition.x + 0.09f * myLocalScaleX, centerPosition.y - 0.1f);
     grounded[0] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
+    Vector2 slopeLine = new Vector2(linePos.x, linePos.y);//坂道に接しているかもついでに判定
+    this.staySlope[0] = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer); //坂道に接しているかもついでに判定
+    Debug.DrawLine(centerPosition, slopeLine, Color.blue);
     Debug.DrawLine(centerPosition, linePos, Color.red);
     linePos = new Vector2(centerPosition.x, centerPosition.y - 0.1f);
     grounded[1] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
-    Vector2 slopeLine = new Vector2(centerPosition.x, centerPosition.y - 0.13f);//坂道に接しているかもついでに判定
-    this.staySlope = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer); //坂道に接しているかもついでに判定
+    slopeLine = new Vector2(centerPosition.x, centerPosition.y - 0.13f);//坂道に接しているかもついでに判定
+    this.staySlope[1] = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer); //坂道に接しているかもついでに判定
     Debug.DrawLine(centerPosition, slopeLine, Color.blue);
     Debug.DrawLine(centerPosition, linePos, Color.red);
     linePos = new Vector2(centerPosition.x - 0.12f * myLocalScaleX, centerPosition.y - 0.12f);
     grounded[2] = Physics2D.Linecast(centerPosition, linePos, groundLayer);
+    slopeLine = new Vector2(linePos.x, linePos.y);//坂道に接しているかもついでに判定
+    this.staySlope[2] = Physics2D.Linecast(centerPosition, slopeLine, slopeLayer); //坂道に接しているかもついでに判定
+    Debug.DrawLine(centerPosition, slopeLine, Color.blue);
     Debug.DrawLine(centerPosition, linePos, Color.red);
 
     //接地判定をして結果をgourended_result変数に入れる
@@ -120,7 +126,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.jumpTime = 0;
     }
 
-    if (this.staySlope) {
+    if ((this.staySlope[0]) || (this.staySlope[1]) || (this.staySlope[2])) {
       this.animator.SetBool("Slope", true);
     }
     else {
@@ -139,7 +145,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.jumpCollider.SetActive(true);
       this.animator.SetBool("Grounded", false);
       this.slopeCollider.SetActive(false);
-      if (this.staySlope) {
+      if ((this.staySlope[0]) || (this.staySlope[1]) || (this.staySlope[2])) {
         this.jumpCollider.SetActive(false);
         this.slopeCollider.SetActive(true);
       }
