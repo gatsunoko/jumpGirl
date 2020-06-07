@@ -141,6 +141,10 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.animator.SetBool("Slope", false);
     }
     else {
+      //動く床に接していたら親要素から外す
+      transform.SetParent(null);
+      //親オブジェクトが回転していた場合自分の角度も狂っているので、０にする
+      transform.rotation = Quaternion.Euler(0, 0, 0);
       this.groundedCollider.SetActive(false);
       this.jumpCollider.SetActive(true);
       this.animator.SetBool("Grounded", false);
@@ -197,8 +201,11 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
       this.animator.SetBool("JumpTame", false);
       this.jumpDelayCount = 0;
       this.jump_sound.PlayOneShot(this.jump_sound.clip); //効果音を鳴らす
-      PlayerPrefs.SetFloat("ResbornX", transform.position.x);
-      PlayerPrefs.SetFloat("ResbornY", transform.position.y);
+      //親要素がなかったら(動く足場に乗ってなかったら)ジャンプ位置を記録
+      if (!transform.parent) {
+        PlayerPrefs.SetFloat("ResbornX", transform.position.x);
+        PlayerPrefs.SetFloat("ResbornY", transform.position.y);
+      }
     }
     //ジャンプを連続できないようにするディレイタイムを加算する
     if (this.jumpDelayCount < 2.0f) {
@@ -230,7 +237,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     }
   }
 
-  private void OnTriggerExit2D(Collider2D col) {
+  private void OnCollisionExit2D(Collision2D col) {
     //動く床から離れたら床との親子関係を解消する
     if (col.gameObject.tag == "MoveFloor" || col.gameObject.name == "MoveFloor") {
       transform.SetParent(null);

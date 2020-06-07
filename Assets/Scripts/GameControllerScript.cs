@@ -12,9 +12,11 @@ public class GameControllerScript : MonoBehaviour {
   }
 
   void Update() {
+    //R押したらリセット
     if (Input.GetKeyDown(KeyCode.R)) {
       SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+    //Q押したら最後にジャンプした一に
     if (Input.GetKeyDown(KeyCode.Q)) {
       if (PlayerPrefs.HasKey("ResbornX")) {
         this.player.transform.position = new Vector2(PlayerPrefs.GetFloat("ResbornX"),
