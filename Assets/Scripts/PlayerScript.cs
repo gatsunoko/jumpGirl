@@ -26,7 +26,7 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
   public float jumpForceY = 20.0f;
   float jumpTime = 0; //ジャンプ貯め時間を保存する変数
   float jumpDelay = 0.4f;
-  float jumpDelayCount = 3.0f;
+  float jumpDelayCount = 3.0f;//ジャンプを連続でできないようにする為にディレイタイムも作る変数
   Image hpBarImage;
   public LayerMask slopeLayer;
   bool[] staySlope = new bool[3] { false, false, false };
@@ -62,8 +62,15 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
     else {
       this.animator.SetBool("walk", false);
     }
-    //地面に接地していたら歩行処理
-    if ((this.grounded_result) && (this.jumpDelay < this.jumpDelayCount) && (key != 0)) {
+    //地面に接地していたら
+    //ジャンプディレイを過ぎていたら
+    //キーが押されていたら
+    //スペースが押されていなかったら
+    //歩行処理
+    if ((this.grounded_result) &&
+        (this.jumpDelay < this.jumpDelayCount) &&
+        (key != 0) &&
+        (!this.jumpTap)) {
       //歩行maxスピード以下なら速度を足
       if (Mathf.Abs(this.rigid2d.velocity.x) < this.walkSpeedMax) {
         this.rigid2d.AddForce(new Vector2(this.walkSpeed * key, 0));
@@ -157,18 +164,13 @@ public class PlayerScript : SingletonMonoBehaviourFast<PlayerScript> {
 
     //--------------キー入力--------------
     //左右キー
-    if (!Input.GetKey(KeyCode.Space)) {
-      if (Input.GetKey(KeyCode.LeftArrow)) {
-        this.leftTap = true;
-      }
-      if (Input.GetKey(KeyCode.RightArrow)) {
-        this.rightTap = true;
-      }
+    if (Input.GetKey(KeyCode.LeftArrow)) {
+      this.leftTap = true;
     }
-    else {
-      this.leftTap = false;
-      this.rightTap = false;
+    if (Input.GetKey(KeyCode.RightArrow)) {
+      this.rightTap = true;
     }
+
     if (Input.GetKeyUp(KeyCode.LeftArrow)) {
       this.leftTap = false;
     }
